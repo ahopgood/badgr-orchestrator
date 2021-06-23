@@ -1,0 +1,57 @@
+version: '2'
+services:
+  api:
+    container_name: badgr-server
+    image: alex-badgr-server:latest
+#    image: badgr-server:latest
+#    command: uwsgi --ini /badgr_server/uwsgi.ini
+    volumes:
+#      - app.sock:/badgr_server/app.sock
+      - badgr_server_api:/badgr_server
+    networks:
+      - badgr
+    depends_on:
+      - "db"
+      - "memcached"
+
+  memcached:
+    image: 'bitnami/memcached:latest'
+    expose:
+      - "11211"
+    networks:
+      - badgr
+
+  db:
+    image: mysql:5.6.39
+    volumes:
+      - ./volumes/badgr_server_prod_db:/var/lib/mysql:rw
+    environment:
+      - MYSQL_USER=badgr
+      - MYSQL_PASSWORD=password
+      - MYSQL_HOST=db
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=badgr
+    expose:
+      - "3306"
+    networks:
+      - badgr
+
+  # this container runs nginx (webserver) and uses the uwsgi app.sock file from prod_api via a volume
+  nginx:
+    image: badgr-nginx:latest
+    container_name: badgr-nginx
+    volumes:
+      - badgr_server_api:/badgr_server
+    depends_on:
+      - "api"
+    networks:
+      - badgr
+    ports:
+      - "8080:80"
+
+networks:
+  badgr:
+    driver: bridge
+
+volumes:
+  badgr_server_api:
