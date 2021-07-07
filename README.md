@@ -7,6 +7,10 @@ Required projects
 
 ## Building Images
 ### Badgr UI
+* Navigate to the root of the `badgr-ui` project
+* To build the server image run:
+    * `docker build . -t badgr-ui:$(date "+%Y%m%d-%H%M")`
+    * `docker build . -t badgr-ui:latest`
 ### Badgr Server
 * Navigate to the root of the `badgr-server` project
 * To build the server image run:
@@ -15,11 +19,17 @@ Required projects
 * To build the nginx server image run:
     * `docker build -f .docker/Dockerfile.nginx . -t badgr-nginx:$(date "+%Y%m%d-%H%M")`  
     * `docker build -f .docker/Dockerfile.nginx . -t badgr-nginx:latest`
-* For **each image** this provides you with a specific timestamped version and a latest version.    
+* For **each image** this provides you with a specific timestamped version and a "latest" version.    
 * The docker compose file will use the `latest` version by default.
 
 ## Setting up the `.env` file
-
+* `BADGR_SERVER_PROJECT_LOCATION` is the location of your [badgr-server](https://github.com/concentricsky/badgr-server.git) project
+    * This is used to build the badgr server docker images
+    * This is required by the `build.sh` script
+* `BADGR_UI_PROJECT_LOCATION` is the location of your [badgr-ui](https://github.com/ahopgood/badgr-ui) project
+    * This is used to build the badgr ui docker images
+    * This is required by the `build.sh` script
+    
 ## Running the stack
 ```
 docker-compose up -d
@@ -50,10 +60,17 @@ If you use the `Dockerfile` in this project you can ignore the above commands.
             * `/badgr_server/mediafiles`
             * `/badgr_server/staticfiles`
             * `/badgr_server/app.sock`
-### Badgr-Server TO-DO
-* Externalise properties as environment variables
-    * db name
-    * db username
-    * db password
-* ~~Can we pre-run the badger server commands as part of the `command` block?~~
-    * No but we can bundle them into a bash script
+* **badgr-ui**
+    * ~~Add to the docker-compose file~~
+    * ~~Add docker build steps to readme section~~
+    * ~~Add docker build to the helper script~~
+    * Verify port mapping is possible from any external port to internal port 4200
+    * Make port a variable in the docker file so there is a single source of truth
+    * Try to get the docker network dns to resolve to `badgr-server` for the API_BASE_URL environment variable.
+* **Badgr-Server**
+    * Externalise properties as environment variables
+        * db name
+        * db username
+        * db password
+    * ~~Can we pre-run the badger server commands as part of the `command` block?~~
+        * No but we can bundle them into a bash script

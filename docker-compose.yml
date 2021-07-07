@@ -1,6 +1,6 @@
 version: '2'
 services:
-  api:
+  badgr-server:
     container_name: badgr-server
     image: alex-badgr-server:latest
 #    image: badgr-server:latest
@@ -16,6 +16,7 @@ services:
 
   memcached:
     image: 'bitnami/memcached:latest'
+    container_name: bager-memcached
     expose:
       - "11211"
     networks:
@@ -23,14 +24,15 @@ services:
 
   db:
     image: mysql:5.6.39
+    container_name: badgr-db
     volumes:
       - ./volumes/badgr_server_prod_db:/var/lib/mysql:rw
     environment:
       - MYSQL_USER=badgr
-      - MYSQL_PASSWORD=password
+      - MYSQL_PASSWORD=${MYSQL_USER}
       - MYSQL_HOST=db
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=badgr
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     expose:
       - "3306"
     networks:
@@ -42,12 +44,24 @@ services:
     container_name: badgr-nginx
     volumes:
       - badgr_server_api:/badgr_server
-    depends_on:
-      - "api"
-    networks:
-      - badgr
     ports:
       - "8080:80"
+    networks:
+      - badgr
+    depends_on:
+      - "badgr-server"
+
+  badgr-ui:
+    image: badgr-ui:latest
+    container_name: badgr-ui
+    environment:
+      API_BASE_URL: badgr-server
+    ports:
+      - "4200:4200"
+    networks:
+      - badgr
+    depends_on:
+      - "badgr-server"
 
 networks:
   badgr:
