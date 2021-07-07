@@ -45,7 +45,11 @@ If you use the `Dockerfile` in this project you can ignore the above commands.
 * As all services are on the same user specified network I'm not convinced they need to expose ports? 
 * Explore making only the badgr server `app.sock ` file a single file volume we can share with nginx instead of the entirety of the server's application directory
     * Seems this isn't possible with [named volumes](https://github.com/moby/moby/issues/38851)
-
+    * Perhaps try a shared volume container pattern?
+        * Might be difficult due to how much is used by nginx:
+            * `/badgr_server/mediafiles`
+            * `/badgr_server/staticfiles`
+            * `/badgr_server/app.sock`
 ### Badgr-Server TO-DO
 * Externalise properties as environment variables
     * db name
