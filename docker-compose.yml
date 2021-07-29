@@ -3,11 +3,16 @@ services:
   badgr-server:
     container_name: badgr-server
     image: alex-badgr-server:latest
-#    image: badgr-server:latest
+    #    image: badgr-server:latest
 #    command: uwsgi --ini /badgr_server/uwsgi.ini
     volumes:
 #      - app.sock:/badgr_server/app.sock
       - badgr_server_api:/badgr_server
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     networks:
       - badgr
     depends_on:
@@ -28,8 +33,8 @@ services:
     volumes:
       - ./volumes/badgr_server_prod_db:/var/lib/mysql:rw
     environment:
-      - MYSQL_USER=badgr
-      - MYSQL_PASSWORD=${MYSQL_USER}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_HOST=db
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
