@@ -9,16 +9,13 @@ Required projects
 ### Badgr UI
 * Navigate to the root of the `badgr-ui` project
 * To build the server image run:
-    * `docker build . -t badgr-ui:$(date "+%Y%m%d-%H%M")`
-    * `docker build . -t badgr-ui:latest`
+    * `docker build . -t badgr-ui:$(date "+%Y%m%d-%H%M") -t badgr-ui:latest`
 ### Badgr Server
 * Navigate to the root of the `badgr-server` project
 * To build the server image run:
-    * `docker build -f .docker/Dockerfile.prod.api . -t badgr-server:$(date "+%Y%m%d-%H%M")`
-    * `docker build -f .docker/Dockerfile.prod.api . -t badgr-server:latest`  
+    * `docker build -f .docker/Dockerfile.prod.api . -t badgr-server:$(date "+%Y%m%d-%H%M") -t badgr-server:latest`
 * To build the nginx server image run:
-    * `docker build -f .docker/Dockerfile.nginx . -t badgr-nginx:$(date "+%Y%m%d-%H%M")`  
-    * `docker build -f .docker/Dockerfile.nginx . -t badgr-nginx:latest`
+    * `docker build -f .docker/Dockerfile.nginx . -t badgr-nginx:$(date "+%Y%m%d-%H%M") -t badgr-nginx:latest`  
 * For **each image** this provides you with a specific timestamped version and a "latest" version.    
 * The docker compose file will use the `latest` version by default.
 
@@ -34,6 +31,12 @@ Required projects
 ```
 docker-compose up -d
 ```
+To tear down:
+```
+docker-compose down -v
+```
+**NOTE** the `-v` is required to remove the volume that shares the main server working directory otherwise you **will** see aberrant behaviour as previous state will not be cleaned up. 
+
 ### Badgr Server
 If using the original `badgr-server` image you will need to run the following commands to get the service up and running:
 ```
@@ -68,7 +71,7 @@ If you use the `Dockerfile` in this project you can ignore the above commands.
     * Make port a variable in the docker file so there is a single source of truth
     * Try to get the docker network dns to resolve to `badgr-server` for the API_BASE_URL environment variable.
 * **Badgr-Server**
-    * Externalise properties as environment variables
+    * Externalise properties as environment variables in python
         * db name
         * db username
         * db password
