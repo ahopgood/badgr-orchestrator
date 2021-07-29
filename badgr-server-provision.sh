@@ -7,6 +7,7 @@ uwsgi --ini /badgr_server/uwsgi.ini &
 sleep 10
 python /badgr_server/manage.py migrate
 python /badgr_server/manage.py dist
-python /badgr_server/manage.py collectstatic
+python /badgr_server/manage.py collectstatic --noinput
+
 # Bring uwsgi back to the foreground so the container doesn't grind to a halt
 fg 1
